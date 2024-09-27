@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Video</title>
+</head>
+<body>
+{% block content %}
+     <div class="box">
+     <div class="reg" style="top: 20%; position: relative; margin-left: auto; margin-right: auto">
+    <h3>Добавить видео</h3>
+    <form action="" method="post" enctype="multipart/form-data">
+        <p>Название</p>
+        <input style="border: none; border-radius: 5px;width: 70%; height: 40px; color: black; background: rgba(100, 100, 100, 0.3); font-family: sans-serif; outline: none; padding-left: 20px; padding-right: 20px;" type="text" name="title" placeholder=""  required><br>
+        <p>Описание</p>
+        <textarea style="border: none; border-radius: 5px;width: 70%; height: 40px; color: black; padding-top: 10px; background: rgba(100, 100, 100, 0.3); font-family: sans-serif; outline: none; padding-left: 20px; padding-right: 20px;" name="description" placeholder="" required></textarea><br>
+        <input type="file" name="file" accept="video/*" required><br>
+        <input id="but" type="submit" value="Загрузить"><br>
+        <a class="btn btn-one" style="font-size: 13px" href="{{ url_for('glav') }}">Отменить</a>
+    </form>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class="flashes" style="margin: 0; padding: 0;">
+        {% for message in messages %}
+            <p style="color: rgba(100,100,100,0.95); margin: 0; text-align: center">{{ message }}</p>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+     </div>
+     </div>
+{% endblock %}

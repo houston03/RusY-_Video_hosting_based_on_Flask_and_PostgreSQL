@@ -1,0 +1,59 @@
+{% extends 'mainpage.html' %}
+<!DOCTYPE html>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Мой канал</title>
+</head>
+<body>
+{% block content %}
+
+    <div class="header_channel">
+
+<div class="container" style="position: fixed; margin-left: -50px; margin-top: 17px; ">
+
+    {% if avatar %}
+        <img src="{{ url_for('static', filename='uploads/' ~ avatar) }}" alt="Аватар" style="width:100px; height:100px;object-fit: cover;
+    position: static;">
+    {% else %}
+        <div style="width:100px; height:100px; border: 1px solid gray;"></div>
+    {% endif %}
+
+     </div>
+
+    </div>
+     <h2 style="margin-left: 50px">{{ session['username'] }}</h2>
+<p style="margin-left: 50px; color: rgba(100, 100, 150, 0.8)">Подписчиков:</p>
+    <p style="margin-left: 50px; color: rgba(100, 100, 150, 0.8)">Видео:</p>
+    <div style="display: flex">
+    <h3 style="margin-left: 50px;">Мои видео</h3>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class="flashes" style="margin: 0; padding: 0;">
+        {% for message in messages %}
+            <p style="color: rgba(100,100,100,0.95); margin: 0; margin-top: 5px; margin-left: 10px; text-align: center">{{ message }}</p>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+    </div>
+<div class="content_vid" style="display: flex;     flex-wrap: wrap;">
+
+    {% for video in videos %}
+    <div style="width: 330px; padding-right: 10px ">
+        <video width="320" height="240" controls>
+            <source src="{{ url_for('static', filename='uploads/videos/' ~ video[1]) }}" type="video/mp4">  <!-- video[1] is the filename -->
+            Your browser does not support the video tag.
+        </video>
+        <p>Название: {{ video[2] }}</p>  <!-- video[2] is the title -->
+        <p>Описание: {{ video[3] }}</p>  <!-- video[3] is the description -->
+        <a class="btn btn-two" style="width: 100%" href="{{ url_for('edit_video', video_id=video[0]) }}">Редактировать</a>  <!-- video[0] is the video id -->
+
+    </div>
+{% endfor %}
+</div>
+
+{% endblock %}
+</body>
+</html>
