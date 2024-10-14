@@ -1,0 +1,25 @@
+{% extends 'mainpage.html' %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+{% block content %}
+<h3 style="margin-left: 50px">Подписки</h3>
+
+<div class="users-container" style="display: flex; flex-wrap: wrap; margin: 50px;">
+    {% for subscription in subscriptions %}
+
+        <div class="user-card" style="margin: 5px; padding: 10px; border: 0px solid gray; border-radius: 5px; width: 200px; height: 200px">
+
+            {% if subscription[2] %}
+            <img src="{{ url_for('static', filename='uploads/' ~ subscription[2]) }}" style="width:50%; height:50%; object-fit: cover;border: 1px solid gray; border-radius: 90px;">
+            {% else %}
+            <img src="/static/img/net_foto.jpg" style="width:50%; height:50%; object-fit: cover;border: 1px solid gray; border-radius: 90px;">
+                {% endif %}
+            <p>Канал пользователя:<br> {{ subscription[1] }}</p>
+            <a href="{{ url_for('user_channel', user_id=subscription[0]) }}" class="btn btn-two" style="width: 100%">Перейти на канал</a>
+
+        </div>
+
+    {% endfor %}
+</div>
+
+{% endblock %}
