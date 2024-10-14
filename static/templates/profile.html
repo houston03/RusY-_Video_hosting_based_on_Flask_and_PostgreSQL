@@ -1,0 +1,41 @@
+<!doctype html>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+<script src="/static/js/style.js" defer></script>
+<html>
+<head>
+    <title>Профиль</title>
+</head>
+<body>
+<div class="box">
+ <div class="reg" style="top: 20%; position: relative; margin-left: auto; margin-right: auto">
+    <h1>Профиль, {{ username }}</h1>
+<p>Почта: {{ email }}</p>
+ <p1>Id: #{{userid}}</p1><br>
+ <div class="container">
+    {% if avatar %}
+        <img src="{{ url_for('static', filename='uploads/' ~ avatar) }}" alt="Аватар" style="width:100px; height:100px;object-fit: cover;
+    position: static;">
+    {% else %}
+        <div style="width:100px; height:100px; border: 1px solid gray;"></div>
+    {% endif %}
+     </div>
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class="flashes" style="margin: 0; padding: 0">
+        {% for message in messages %}
+            <p style="color: rgba(100,130,100,0.85); margin: 0">{{ message }}</p>
+        {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+    <p>Это ваша страница профиля.</p>
+<div class="container_but">
+    <a class="btn btn-one" href="/glav">Главная</a>
+    <a class="btn btn-one" href="{{ url_for('edit_profile') }}">Редактировать профиль</a>
+ <a class="btn btn-one" href="{{ url_for('login') }}">Выйти</a>
+</div>
+ </div>
+</div>
+</body>
+</html>

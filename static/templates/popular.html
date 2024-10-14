@@ -1,0 +1,53 @@
+{% extends 'mainpage.html' %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+{% block content %}
+<h3 style="margin-left: 50px">Популярные видео</h3>
+
+    <div class="content_vid" style="display: flex; flex-wrap: wrap; margin-left: 50px; height: 79.8%;">
+
+{% for video in videos %}
+<div style="margin: 5px; width: 24%; height: 66%">
+    <video width="320" height="180" style="border-radius: 5px" controls>
+        <source src="{{ url_for('static', filename='uploads/videos/' ~ video.filename) }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div style="margin-top: 10px;">
+        <p style="font-weight: bold"> {{ video.title }}</p>
+        <p> {{ video.description }}</p>
+        <p>Автор: {{ video.username }}</p>
+
+        <div>
+            <p><i class="bi bi-heart">
+    </i> {{ video.likes | default(0) }} | <i class="bi bi-heartbreak">
+    </i> {{ video.dislikes | default(0) }}</p>
+        </div>
+
+        <form action="{{ url_for('like_video', video_id=video.id) }}" method="post" style="display: inline;">
+            <button class="gla1" style="height: 30px; margin-top: 5px;" type="submit"><i class="bi bi-hand-thumbs-up" style="font-size: 1.5em;">
+    </i></button>
+        </form>
+        <form action="{{ url_for('dislike_video', video_id=video.id) }}" method="post" style="display: inline;">
+            <button class="gla2" style="height: 30px; margin-top: 5px" type="submit"><i class="bi bi-hand-thumbs-down"  style="font-size: 1.5em;">
+    </i></button>
+        </form>
+
+        <form action="{{ url_for('comment_video', video_id=video.id) }}" method="post" style="margin-top: 10px;">
+            <input style="padding-right: 17%" id="com" name="comment" required size="30">
+            <button style="right: 0px; width: 15%" class="main" type="submit"><i class="bi bi-send " style="font-size: 1.5em;">
+    </i></button>
+        </form>
+<div class="comments">
+        <div style="margin-top: 10px;">
+            {% for comment in video.comments %}
+                <p><strong>{{ comment[0] }}:</strong> {{ comment[1] }} <em>({{ comment[2] }})</em></p>
+            {% endfor %}
+        </div>
+</div>
+    </div>
+</div>
+{% endfor %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'mainpage.html' %}
+
+{% block content %}
+
+{% for video in search_results %}
+
+
+<div style="margin-top: 10px;">
+    <p style="font-weight: bold"> {{ video.title }}</p>
+    <p> {{ video.description }}</p>
+    <p>Автор: {{ video.username }}</p>
+
+    <div>
+        <p>Лайки {{ video.likes | default(0) }} | Дизлайки: {{ video.dislikes | default(0) }}</p>
+    </div>
+
+    <form action="{{ url_for('like_video', video_id=video.id) }}" method="post" style="display: inline;">
+        <button class="gla" type="submit">👍</button>
+    </form>
+    <form action="{{ url_for('dislike_video', video_id=video.id) }}" method="post" style="display: inline;">
+        <button class="gla" type="submit">👎</button>
+    </form>
+
+    <form action="{{ url_for('comment_video', video_id=video.id) }}" method="post" style="margin-top: 10px;">
+        <input style="padding-right: 55%" id="com" name="comment" required size="30">
+        <button style="right: 0px;" class="main" type="submit">Оставить комментарий</button>
+    </form>
+</div>
