@@ -331,11 +331,11 @@ def edit_profile():
 
 def get_db_connection():
     conn = psycopg2.connect(
-        host='autorack.proxy.rlwy.net : 55785',
-        dbname='rusyoutube_db',
-        user='postgres',
-        password='root',
-        port=5432,
+        host=os.getenv("PGHOST"),  # Хост базы данных
+        database=os.getenv("PGDATABASE"),  # Имя базы данных
+        user=os.getenv("PGUSER"),  # Пользователь базы данных
+        password=os.getenv("PGPASSWORD"),  # Пароль пользователя
+        port=os.getenv("PGPORT") or 5432  # Порт базы данных по умолчанию 5432
     )
     return conn
 
