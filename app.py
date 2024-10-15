@@ -331,7 +331,7 @@ def edit_profile():
 
 def get_db_connection():
     conn = psycopg2.connect(
-        host='localhost',
+        host='autorack.proxy.rlwy.net : 55785',
         dbname='rusyoutube_db',
         user='postgres',
         password='root',
