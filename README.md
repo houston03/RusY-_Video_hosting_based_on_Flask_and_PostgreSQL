@@ -1,6 +1,7 @@
+## RusY
 Крупный проект RusY, является упрощенной версией YouTube. Для реализации был взят фрейворк Flask и PostgreSQL.
 Видеохостинг вместил в себя такие функции как: 
-
+## Функционал:
 -Регистрация пользователя и автоматическое создание канала;
 ![image](https://github.com/user-attachments/assets/101ae5eb-d80f-43fa-8ab5-62bda1fdf10d)
 ![image](https://github.com/user-attachments/assets/ffa97baf-843d-4716-b84d-493740f16ba2)
