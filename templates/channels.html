@@ -12,12 +12,12 @@
     <div class="users-container" style="display: flex; flex-wrap: wrap; margin: 50px;">
         {% for user in users %}
             <div class="user-card" style="margin: 5px; padding: 10px; border: 0px solid gray; border-radius: 5px; width: 200px; height: 200px">
-                {% if user[2] %}  <!-- user[2] is the avatar -->
+                {% if user[2] %} 
                     <img src="{{ url_for('static', filename='uploads/' ~ user[2]) }}" alt="Аватар" style="width:50%; height:50%; object-fit: cover;border: 1px solid gray; border-radius: 90px">
                 {% else %}
                    <img src="/static/img/net_foto.jpg" style="width:50%; height:50%; object-fit: cover;border: 1px solid gray; border-radius: 90px;">
                 {% endif %}
-                <h3>{{ user[1] }}</h3>  <!-- user[1] is the username -->
+                <h3>{{ user[1] }}</h3> 
                 <a class="btn btn-two" href="{{ url_for('user_channel', user_id=user[0]) }}">Перейти на канал</a>
 
             </div>
