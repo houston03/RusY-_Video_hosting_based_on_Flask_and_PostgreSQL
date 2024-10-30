@@ -11,8 +11,8 @@ app.secret_key = 'cairocoders-ednalan'
 
 UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-UPLOAD_FOLDER = 'static/uploads/videos'  # Make sure this folder exists
-ALLOWED_EXTENSIONS = {'mp4', 'mkv', 'avi', 'mov'}  # Add allowed video extensions
+UPLOAD_FOLDER = 'static/uploads/videos'  
+ALLOWED_EXTENSIONS = {'mp4', 'mkv', 'avi', 'mov'}  
 
 
 def allowed_file(filename):
@@ -37,11 +37,11 @@ def upload_video():
 
             title = request.form['title']
             description = request.form['description']
-            category = request.form['category']  # Получаем выбранную категорию
+            category = request.form['category'] 
 
             with get_db_connection() as conn:
                 with conn.cursor() as cur:
-                    # Используйте один запрос для вставки с категорией
+                  
                     cur.execute(
                         "INSERT INTO videos (user_id, filename, title, description, category) VALUES (%s, %s, %s, %s, %s)",
                         (userid, filename, title, description, category))
@@ -69,12 +69,12 @@ def edit_video(video_id):
 
             if request.method == 'POST':
                 if 'delete' in request.form:
-                    # Удаление комментариев к видео
+                    
                     cur.execute("DELETE FROM comments WHERE video_id = %s", (video_id,))
-                    # Удаление лайков и дизлайков к видео
+                    
                     cur.execute("DELETE FROM video_ratings WHERE video_id = %s", (video_id,))
                     cur.execute("DELETE FROM favorites WHERE video_id = %s", (video_id,))
-                    # Удаление самого видео из базы данных
+                    
                     cur.execute("DELETE FROM videos WHERE id = %s", (video_id,))
                     conn.commit()
 
@@ -84,7 +84,7 @@ def edit_video(video_id):
                     title = request.form['title']
                     description = request.form['description']
 
-                    # Update the video details in the database
+                    
                     cur.execute("UPDATE videos SET title = %s, description = %s WHERE id = %s",
                                 (title, description, video_id))
                     conn.commit()
@@ -106,7 +106,7 @@ def music_page():
     videos = []
     with get_db_connection() as conn:
         with conn.cursor() as cur:
-            # Получение данных о видео
+            
             cur.execute("""
                 SELECT v.id, v.filename, v.user_id, v.title, v.description, u.username
                 FROM videos v
@@ -115,11 +115,11 @@ def music_page():
             """, ('music',))
             videos_data = cur.fetchall()
 
-            # Получение лайков, дизлайков и комментариев для каждого видео
+            
             for video in videos_data:
                 video_id = video[0]
 
-                # Лайки и дизлайки
+               
                 cur.execute("""
                     SELECT COUNT(*) FILTER (WHERE rating = 1) AS likes,
                            COUNT(*) FILTER (WHERE rating = -1) AS dislikes
@@ -127,7 +127,7 @@ def music_page():
                 """, (video_id,))
                 ratings = cur.fetchone()
 
-                # Комментарии
+                
                 cur.execute(
                     "SELECT u.username, c.comment, c.created_at FROM comments c JOIN users u ON c.user_id = u.id WHERE c.video_id = %s;",
                     (video_id,))
@@ -145,7 +145,7 @@ def music_page():
                     'comments': comments,
                 })
 
-            # Получение аватара пользователя
+            
             if userid:
                 cur.execute("SELECT avatar FROM users WHERE id = %s", (userid,))
                 result = cur.fetchone()
@@ -265,25 +265,25 @@ def edit_profile():
     userid = session['user_id']
     username = session['username']
 
-    # Получение текущего аватара
+    
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT avatar FROM users WHERE id = %s", (userid,))
             avatar = cur.fetchone()[0]
 
     if request.method == 'POST':
-        # Обработка загрузки файла
+        
         if 'avatar' in request.files and request.files['avatar'].filename:  # Если файл был загружен
             avatar_file = request.files['avatar']
             filename = secure_filename(avatar_file.filename)
             avatar_file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            # Сохранение нового имени файла в базе данных
+            
             with get_db_connection() as conn:
                 with conn.cursor() as cur:
                     cur.execute("UPDATE users SET avatar = %s WHERE id = %s", (filename, userid))
                     conn.commit()
 
-        # Дополнительная обработка изменений профиля
+        
         new_username = request.form.get('username')
         if new_username:
             session['username'] = new_username
@@ -292,15 +292,15 @@ def edit_profile():
                     cur.execute("UPDATE users SET username = %s WHERE id = %s", (new_username, userid))
                     conn.commit()
 
-        # Обработка изменения пароля (теперь необязательное)
+        
         old_password = request.form.get('old_password')
         new_password = request.form.get('new_password')
         confirm_password = request.form.get('confirm_password')
 
-        # Если указаны старый и новый пароли, проверяем и обновляем
+        
         if old_password or new_password or confirm_password:
             if old_password and new_password and confirm_password:
-                # Получение хеша текущего пароля из базы данных для валидации
+                
                 with get_db_connection() as conn:
                     with conn.cursor() as cur:
                         cur.execute("SELECT password FROM users WHERE id = %s", (userid,))
@@ -308,7 +308,7 @@ def edit_profile():
 
                 if check_password_hash(current_hashed_password, old_password):
                     if new_password == confirm_password:
-                        # Хешируем новый пароль и сохраняем его
+                        
                         new_hashed_password = generate_password_hash(new_password)
                         with get_db_connection() as conn:
                             with conn.cursor() as cur:
@@ -331,11 +331,11 @@ def edit_profile():
 
 def get_db_connection():
     conn = psycopg2.connect(
-        host=os.getenv("PGHOST"),  # Хост базы данных
-        database=os.getenv("PGDATABASE"),  # Имя базы данных
-        user=os.getenv("PGUSER"),  # Пользователь базы данных
-        password=os.getenv("PGPASSWORD"),  # Пароль пользователя
-        port=os.getenv("PGPORT") or 5432  # Порт базы данных по умолчанию 5432
+        host=os.getenv("PGHOST"), 
+        database=os.getenv("PGDATABASE"),  
+        user=os.getenv("PGUSER"), 
+        password=os.getenv("PGPASSWORD"),  
+        port=os.getenv("PGPORT") or 5432  
     )
     return conn
 
@@ -374,19 +374,19 @@ def like_video(video_id):
                         ON CONFLICT (video_id, user_id) DO UPDATE SET rating = 1;
                         """, (video_id, user_id))
             conn.commit()
-            # Проверяем, есть ли уже запись в favorites
+            
             cur.execute("""
                 SELECT EXISTS(SELECT 1 FROM favorites WHERE user_id = %s AND video_id = %s);
             """, (user_id, video_id))
             exists = cur.fetchone()[0]
 
             if exists:
-                # Если видео уже в "Понравившихся", удаляем его
+                
                 cur.execute("""
                     DELETE FROM favorites WHERE user_id = %s AND video_id = %s;
                 """, (user_id, video_id))
             else:
-                # Если видео не в "Понравившихся", добавляем его
+                
                 cur.execute("""
                     INSERT INTO favorites (user_id, video_id)
                     VALUES (%s, %s);
@@ -403,7 +403,7 @@ def popular():
     userid = session.get('user_id')
     with get_db_connection() as conn:
         with conn.cursor() as cur:
-            # Получение видео с более чем 5 лайками
+           
             cur.execute("""
                 SELECT v.id, v.filename, v.user_id, v.title, v.description, u.username
                 FROM videos v
@@ -418,7 +418,7 @@ def popular():
             """)
             videos_data = cur.fetchall()
 
-            # Получение лайков и дизлайков, аналогично как в /glav
+           
             for video in videos_data:
                 video_id = video[0]
                 cur.execute("""
@@ -428,7 +428,7 @@ def popular():
                 """, (video_id,))
                 ratings = cur.fetchone()
 
-                # Получение комментариев для каждого видео
+               
                 cur.execute(
                     "SELECT u.username, c.comment, c.created_at FROM comments c JOIN users u ON c.user_id = u.id WHERE c.video_id = %s;",
                     (video_id,))
@@ -456,7 +456,7 @@ def favorites():
     videos = []
     with get_db_connection() as conn:
         with conn.cursor() as cur:
-            # Получение всех "Понравившихся" видео
+            
             cur.execute("""
                 SELECT v.id, v.filename, v.user_id, v.title, v.description, u.username
                 FROM favorites f
@@ -466,7 +466,7 @@ def favorites():
             """, (userid,))
             videos_data = cur.fetchall()
 
-            # Получение лайков и дизлайков, аналогично как в /glav
+           
             for video in videos_data:
                 video_id = video[0]
                 cur.execute("""
@@ -476,7 +476,7 @@ def favorites():
                 """, (video_id,))
                 ratings = cur.fetchone()
 
-                # Получение комментариев для каждого видео
+               
                 cur.execute(
                     "SELECT u.username, c.comment, c.created_at FROM comments c JOIN users u ON c.user_id = u.id WHERE c.video_id = %s;",
                     (video_id,))
@@ -530,7 +530,7 @@ def comment_video(video_id):
 def get_video_data(video_id):
     with get_db_connection() as conn:
         with conn.cursor() as cur:
-            # Get likes, dislikes and comments for the video
+           
             cur.execute("""
                 SELECT COUNT(*) FILTER (WHERE rating = 1) AS likes,
                        COUNT(*) FILTER (WHERE rating = -1) AS dislikes
@@ -605,23 +605,23 @@ def user_channel(user_id):
 
     with get_db_connection() as conn:
         with conn.cursor() as cur:
-            # Fetch the user's avatar and username using user_id from the URL
+            
             cur.execute("SELECT avatar, username FROM users WHERE id = %s", (user_id,))
             result = cur.fetchone()
             avatar = result[0] if result else None
             username = result[1] if result else "Unknown User"
 
-            # Fetch the user's videos
+            
             cur.execute("SELECT id, filename, title, description FROM videos WHERE user_id = %s", (user_id,))
             videos = cur.fetchall()  # Gets all the user's videos
             videos_count = len(videos)
 
-            # Check if the logged-in user is subscribed to the channel
+           
             cur.execute("SELECT COUNT(*) FROM subscriptions WHERE subscriber_id = %s AND subscribed_to_id = %s",
                         (logged_in_userid, user_id))
             is_subscribed = cur.fetchone()[0] > 0
 
-            # Get the number of subscribers
+            
             cur.execute("SELECT COUNT(*) FROM subscriptions WHERE subscribed_to_id = %s", (user_id,))
             subscribers_count = cur.fetchone()[0]
 
@@ -700,7 +700,7 @@ def my_channel():
             result = cur.fetchone()
             avatar = result[0] if result else None
 
-            # Получение видео с учетом сортировки
+            
             cur.execute(f"""
                 SELECT id, filename, title, description, upload_date
                 FROM videos 
@@ -745,16 +745,16 @@ def search_videos():
             result = cur.fetchone()
             avatar = result[0] if result else None
             if search_query:
-                # Поиск видео по названию
+                
                 cur.execute("""
                     SELECT v.id, v.filename, v.user_id, v.title, v.description, u.username
                     FROM videos v
                     JOIN users u ON v.user_id = u.id
                     WHERE v.title LIKE %s
-                """, (f"%{search_query}%",))  # Используем LIKE для частичного совпадения
+                """, (f"%{search_query}%",)) 
                 videos_data = cur.fetchall()
 
-                # Обработка результатов поиска
+                
                 for video in videos_data:
                     video_id = video[0]
                     cur.execute("""
@@ -764,7 +764,7 @@ def search_videos():
                     """, (video_id,))
                     ratings = cur.fetchone()
 
-                    # Получение комментариев для каждого видео
+                   
                     cur.execute(
                         "SELECT u.username, c.comment, c.created_at FROM comments c JOIN users u ON c.user_id = u.id WHERE c.video_id = %s;",
                         (video_id,))
@@ -807,7 +807,7 @@ def video_page(video_id):
                 """, (video_id,))
                 ratings = cur.fetchone()
 
-                # Получение комментариев для каждого видео
+                
                 cur.execute(
                     "SELECT u.username, c.comment, c.created_at FROM comments c JOIN users u ON c.user_id = u.id WHERE c.video_id = %s;",
                     (video_id,))
@@ -839,7 +839,7 @@ def mainpage():
         with conn.cursor() as cur:
             cur.execute("SELECT avatar FROM users WHERE id = %s", (userid,))
             result = cur.fetchone()
-            avatar = result[0] if result else None  # обработка ошибки, если пользователя нет
+            avatar = result[0] if result else None  
     return render_template('mainpage.html',  avatar=avatar, userid=userid)
 
 
@@ -856,14 +856,14 @@ def register():
             return redirect(url_for('register'))
 
         avatar_filename = None
-        # Проверка наличия файла аватара
+       
         if 'avatar' in request.files:
             avatar = request.files['avatar']
             if avatar and avatar.filename:  # Убедитесь, что файл загружен
                 avatar_filename = secure_filename(avatar.filename)
                 avatar.save(os.path.join(app.config['UPLOAD_FOLDER'], avatar_filename))
 
-        # Проверка на существование пользователя
+       
         with get_db_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute("SELECT * FROM users WHERE username = %s OR email = %s", (username, email))
