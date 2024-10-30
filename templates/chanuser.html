@@ -37,7 +37,7 @@
     {% endif %}
     {% endwith %}
     </div>
-<h2 style="margin-left: 50px">{{ username }}</h2>  <!-- Now we use the username of the user whose channel is being viewed -->
+<h2 style="margin-left: 50px">{{ username }}</h2>  
 <p style="margin-left: 50px; color: rgba(100, 100, 150, 0.8)">Подписчиков: {{ subscribers_count }}</p>
 <p style="margin-left: 50px; color: rgba(100, 100, 150, 0.8)">Видео: {{ videos_count }}</p>
     <div style="margin-left: 50px;">
@@ -62,7 +62,7 @@
             <p>Название: {{ video[2] }}</p>
             <p>Описание: {{ video[3] }}</p>
 
-            <!-- Show edit button only if this is the user's channel -->
+            
             {% if user_id == logged_in_userid %}
                 <a class="btn btn-two" style="width: 100%" href="{{ url_for('edit_video', video_id=video[0]) }}">Редактировать</a>
             {% endif %}
