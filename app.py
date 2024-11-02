@@ -56,7 +56,7 @@ def upload_video():
 def edit_video(video_id):
     with get_db_connection() as conn:
         with conn.cursor() as cur:
-            # Fetch the existing video details
+        
             cur.execute("SELECT filename, title, description, category, upload_date FROM videos WHERE id = %s", (video_id,))
             video = cur.fetchone()
 
