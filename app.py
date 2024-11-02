@@ -506,7 +506,7 @@ def dislike_video(video_id):
     user_id = session.get('user_id')
     with get_db_connection() as conn:
         with conn.cursor() as cur:
-            # Insert or update the dislike
+            
             cur.execute("""
                 INSERT INTO video_ratings (video_id, user_id, rating)
                 VALUES (%s, %s, -1)
@@ -554,7 +554,7 @@ def glav():
 
     with get_db_connection() as conn:
         with conn.cursor() as cur:
-            # Получение данных о видео с учетом сортировки
+            
             cur.execute(f"""
                 SELECT v.id, v.filename, v.user_id, v.title, v.description, u.username, v.upload_date
                 FROM videos v
@@ -588,7 +588,7 @@ def glav():
                     'likes': ratings[0] if ratings else 0,
                     'dislikes': ratings[1] if ratings else 0,
                     'comments': comments,
-                    'upload_date': video[6]  # Include upload date for sorting purposes
+                    'upload_date': video[6]  
                 })
 
             cur.execute("SELECT avatar FROM users WHERE id = %s", (userid,))
@@ -859,7 +859,7 @@ def register():
        
         if 'avatar' in request.files:
             avatar = request.files['avatar']
-            if avatar and avatar.filename:  # Убедитесь, что файл загружен
+            if avatar and avatar.filename:  
                 avatar_filename = secure_filename(avatar.filename)
                 avatar.save(os.path.join(app.config['UPLOAD_FOLDER'], avatar_filename))
 
@@ -895,9 +895,9 @@ def login():
                 cur.execute("SELECT * FROM users WHERE username = %s", (username,))
                 user = cur.fetchone()
 
-                if user and check_password_hash(user[3], password):  # user[3] - это хэш пароля
-                    session['user_id'] = user[0]  # user[0] - это id пользователя
-                    session['username'] = user[1]  # user[1] - это никнейм пользователя
+                if user and check_password_hash(user[3], password):  # это хэш пароля
+                    session['user_id'] = user[0]  # id пользователя
+                    session['username'] = user[1]  # никнейм пользователя
                     flash('Вы вошли в систему!')
                     return redirect(url_for('profile'))  # перенаправление на страницу профиля
 
