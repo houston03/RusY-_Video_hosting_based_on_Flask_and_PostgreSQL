@@ -177,7 +177,7 @@ input[type = "submit"]:hover {
 color: black;
     background: rgba(100, 170, 100, 0.7);
     transition: 0.3s;
-    //you can add more styles to be applied on hover
+    
 }
 input[id = "com"] {
     border: 2px solid rgba(120, 120, 120, 0.2);
@@ -207,7 +207,7 @@ input[id= 'delete']:hover {
 color: black;
     background: rgba(170, 100, 100, 0.7);
     transition: 0.3s;
-    //you can add more styles to be applied on hover
+    
 }
 
 input[type=file]::file-selector-button {
